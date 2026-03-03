@@ -1,0 +1,46 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: billing-service
+  
+  # 👇 (Optional) Add this if you want to use the local password override we set up earlier
+  config:
+    import: optional:classpath:application-local.yml
+  
+  kafka:
+    bootstrap-servers: localhost:9092
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/billing_db
+    username: postgres
+    # If you use application-local.yml, this value is a fallback. 
+    # If not, keep your hardcoded password here.
+    password: Yasuri@123
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+
+eureka:
+  client:
+    # ✅ ENABLE THESE so the API Gateway can find this service
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    # Helps Gateway distinguish instances if you run multiple on same host
+    instance-id: ${spring.application.name}:${random.value}
+
+logging:
+  level:
+    lk.sritel.billing: DEBUG
